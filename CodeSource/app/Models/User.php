@@ -30,6 +30,16 @@ class User extends Authenticatable
         'email',
         'password',
     ];
+    
+    public function role() {
+        return $this->belongsTo(Role::class);
+    }
+    public function restaurants() {
+        return $this->hasMany(Restaurant::class);
+    }
+    public function favoris() {
+        return $this->belongsToMany(Restaurant::class, 'favoris');
+    }
 
     /**
      * The attributes that should be hidden for serialization.
