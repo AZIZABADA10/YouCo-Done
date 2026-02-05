@@ -20,3 +20,6 @@ class CuisineSeeder extends Seeder
         ]);
     }
 }
+
+
+ 
