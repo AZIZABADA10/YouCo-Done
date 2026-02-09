@@ -1,0 +1,62 @@
+<?php
+
+namespace App\Policies;
+
+use App\Models\Restaurant;
+use App\Models\User;
+
+class RestaurantPolicy
+{
+    /**
+     * Determine whether the user can view any models.
+     */
+    public function viewAny(User $user): bool
+    {
+        return $user->hasRole('restaurateur');
+    }
+
+    /**
+     * Determine whether the user can view the model.
+     */
+    public function view(?User $user, Restaurant $restaurant): bool
+    {
+        // Tout le monde peut voir un restaurant
+        return true;
+    }
+
+    /**
+     * Determine whether the user can create models.
+     */
+    public function create(User $user): bool
+    {
+        return $user->hasRole('restaurateur');
+    }
+
+    /**
+     * Determine whether the user can update the model.
+     */
+    public function update(User $user, Restaurant $restaurant): bool
+    {
+        // Admin peut tout modifier
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+
+        // Restaurateur peut modifier seulement ses restaurants
+        return $user->hasRole('restaurateur') && $user->id === $restaurant->user_id;
+    }
+
+    /**
+     * Determine whether the user can delete the model.
+     */
+    public function delete(User $user, Restaurant $restaurant): bool
+    {
+        // Admin peut tout supprimer
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+
+        // Restaurateur peut supprimer seulement ses restaurants
+        return $user->hasRole('restaurateur') && $user->id === $restaurant->user_id;
+    }
+}
