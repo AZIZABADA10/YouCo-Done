@@ -42,7 +42,6 @@ class RestaurantPolicy
             return true;
         }
 
-        // Restaurateur peut modifier seulement ses restaurants
         return $user->hasRole('restaurateur') && $user->id === $restaurant->user_id;
     }
 
@@ -51,12 +50,10 @@ class RestaurantPolicy
      */
     public function delete(User $user, Restaurant $restaurant): bool
     {
-        // Admin peut tout supprimer
         if ($user->hasRole('admin')) {
             return true;
         }
 
-        // Restaurateur peut supprimer seulement ses restaurants
         return $user->hasRole('restaurateur') && $user->id === $restaurant->user_id;
     }
 }
