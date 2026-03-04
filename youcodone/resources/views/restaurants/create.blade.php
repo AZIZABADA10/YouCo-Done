@@ -1,152 +1,162 @@
 @extends('layouts.app')
 
-@section('title', $restaurant->nom)
+@section('title', 'Nouveau Restaurant')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <!-- Bouton retour -->
-    <a href="{{ route('restaurants.index') }}" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 mb-6">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-        </svg>
-        Retour à la liste
-    </a>
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mb-6 flex items-center justify-between">
+        <h1 class="text-3xl font-bold text-gray-900">Publier un nouveau restaurant</h1>
+        <a href="{{ route('restaurants.my') }}" class="text-indigo-600 hover:text-indigo-800">
+            &larr; Retour à mes restaurants
+        </a>
+    </div>
 
-    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <!-- Images -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
-            @forelse($restaurant->photos as $photo)
-                <img src="{{ Storage::url($photo->image) }}" 
-                     alt="{{ $restaurant->nom }}"
-                     class="w-full h-64 object-cover rounded-lg">
-            @empty
-                <div class="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center col-span-2">
-                    <span class="text-gray-400">Aucune photo disponible</span>
-                </div>
-            @endforelse
-        </div>
-
-        <!-- Informations principales -->
-        <div class="p-6 border-t">
-            <div class="flex justify-between items-start mb-6">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $restaurant->nom }}</h1>
-                    <p class="text-lg text-gray-600">{{ $restaurant->cuisine->type }}</p>
-                </div>
-
-                <!-- Boutons d'action -->
-                <div class="flex gap-2">
-                    @auth
-                        @if($isFavorite)
-                            <form method="POST" action="{{ route('favoris.destroy', $restaurant) }}">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="bg-red-100 text-red-600 px-4 py-2 rounded-md hover:bg-red-200">
-                                    ❤️ Retirer des favoris
-                                </button>
-                            </form>
-                        @else
-                            <form method="POST" action="{{ route('favoris.store', $restaurant) }}">
-                                @csrf
-                                <button type="submit" class="bg-gray-100 text-gray-600 px-4 py-2 rounded-md hover:bg-gray-200">
-                                    🤍 Ajouter aux favoris
-                                </button>
-                            </form>
-                        @endif
-
-                        @can('update', $restaurant)
-                            <a href="{{ route('restaurants.edit', $restaurant) }}" 
-                               class="bg-indigo-100 text-indigo-600 px-4 py-2 rounded-md hover:bg-indigo-200">
-                                Modifier
-                            </a>
-                        @endcan
-                    @endauth
-                </div>
-            </div>
-
-            <!-- Détails -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div>
-                    <h3 class="font-semibold text-gray-900 mb-2">📍 Localisation</h3>
-                    <p class="text-gray-600">{{ $restaurant->localisation }}</p>
-                </div>
-                <div>
-                    <h3 class="font-semibold text-gray-900 mb-2">👥 Capacité</h3>
-                    <p class="text-gray-600">{{ $restaurant->capacite }} personnes</p>
-                </div>
-                <div>
-                    <h3 class="font-semibold text-gray-900 mb-2">🍽️ Type de cuisine</h3>
-                    <p class="text-gray-600">{{ $restaurant->cuisine->type }}</p>
-                </div>
-            </div>
-
-            <!-- Horaires -->
-            @if($restaurant->horaires->isNotEmpty())
-                <div class="mb-6">
-                    <h3 class="font-semibold text-gray-900 mb-4">🕐 Horaires d'ouverture</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        @foreach($restaurant->horaires as $horaire)
-                            <div class="flex justify-between p-2 bg-gray-50 rounded">
-                                <span class="font-medium">{{ $horaire->jour_semaine }}</span>
-                                <span class="text-gray-600">{{ $horaire->getFormattedHours() }}</span>
-                            </div>
-                        @endforeach
+    <div class="bg-white rounded-lg shadow-md overflow-hidden p-6 hover:shadow-lg transition">
+        @if ($errors->any())
+            <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">Il y a des erreurs dans votre formulaire :</h3>
+                        <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
                     </div>
                 </div>
-            @endif
+            </div>
+        @endif
 
-            <!-- Menus -->
-            @if($restaurant->menus->isNotEmpty())
+        <form action="{{ route('restaurants.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            @csrf
+
+            <!-- Informations Générales -->
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Informations Générales</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="nom" class="block text-sm font-medium text-gray-700 mb-1">Nom du restaurant <span class="text-red-500">*</span></label>
+                        <input type="text" name="nom" id="nom" value="{{ old('nom') }}" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition"
+                               placeholder="Ex: Le Petit Chef">
+                    </div>
+
+                    <div>
+                        <label for="cuisine_id" class="block text-sm font-medium text-gray-700 mb-1">Type de cuisine <span class="text-red-500">*</span></label>
+                        <select name="cuisine_id" id="cuisine_id" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition">
+                            <option value="">Sélectionnez un type</option>
+                            @foreach($cuisines as $cuisine)
+                                <option value="{{ $cuisine->id }}" {{ old('cuisine_id') == $cuisine->id ? 'selected' : '' }}>
+                                    {{ $cuisine->type }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description <span class="text-gray-400 font-normal">(Optionnelle)</span></label>
+                        <textarea name="description" id="description" rows="4" 
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition"
+                                  placeholder="Décrivez votre restaurant, l'ambiance, vos spécialités...">{{ old('description') }}</textarea>
+                        <p class="mt-1 text-sm text-gray-500">Une bonne description attire plus de clients.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Détails Pratiques -->
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Détails Pratiques</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label for="localisation" class="block text-sm font-medium text-gray-700 mb-1">Adresse complète / Ville <span class="text-red-500">*</span></label>
+                        <input type="text" name="localisation" id="localisation" value="{{ old('localisation') }}" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition"
+                               placeholder="123 Rue de la Paix, 75000 Paris">
+                    </div>
+
+                    <div>
+                        <label for="capacite" class="block text-sm font-medium text-gray-700 mb-1">Capacité maximale (couverts) <span class="text-red-500">*</span></label>
+                        <input type="number" name="capacite" id="capacite" value="{{ old('capacite') }}" required min="1"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition"
+                               placeholder="Ex: 50">
+                    </div>
+
+                    <div>
+                        <label for="ouverture_a" class="block text-sm font-medium text-gray-700 mb-1">Date d'ouverture <span class="text-gray-400 font-normal">(Optionnelle)</span></label>
+                        <input type="date" name="ouverture_a" id="ouverture_a" value="{{ old('ouverture_a') ? date('Y-m-d', strtotime(old('ouverture_a'))) : '' }}"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Médias -->
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Photos</h2>
+                
                 <div>
-                    <h3 class="font-semibold text-gray-900 mb-4">📋 Nos Menus</h3>
-                    @foreach($restaurant->menus as $menu)
-                        <div class="mb-4 p-4 bg-gray-50 rounded-lg">
-                            <h4 class="font-semibold mb-3">Menu {{ $loop->iteration }}</h4>
-                            @if($menu->plats->isNotEmpty())
-                                <div class="space-y-2">
-                                    @foreach($menu->plats as $plat)
-                                        <div class="flex justify-between items-center">
-                                            <span>{{ $plat->content }}</span>
-                                            <span class="font-semibold text-indigo-600">{{ $plat->getFormattedPrice() }}</span>
-                                        </div>
-                                    @endforeach
-                                </div>
-                                <div class="mt-3 pt-3 border-t flex justify-between font-bold">
-                                    <span>Total</span>
-                                    <span class="text-indigo-600">{{ number_format($menu->getTotalPrice(), 2) }} €</span>
-                                </div>
-                            @else
-                                <p class="text-gray-500">Aucun plat dans ce menu</p>
-                            @endif
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Ajouter des photos (JPEG, PNG) <span class="text-gray-400 font-normal">(Optionnel)</span></label>
+                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md bg-white hover:bg-gray-50 transition cursor-pointer" onclick="document.getElementById('photos').click()">
+                        <div class="space-y-1 text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            <div class="flex text-sm text-gray-600 justify-center">
+                                <span class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                                    <span>Cliquez pour uploader</span>
+                                    <input id="photos" name="photos[]" type="file" multiple accept="image/jpeg,image/png,image/jpg" class="sr-only">
+                                </span>
+                                <p class="pl-1">ou glissez-déposez</p>
+                            </div>
+                            <p class="text-xs text-gray-500">PNG, JPG jusqu'à 2MB chacune</p>
                         </div>
-                    @endforeach
+                    </div>
+                    <!-- Zone de prévisualisation des fichiers sélectionnés -->
+                    <div id="file-list" class="mt-3 text-sm text-gray-600 hidden">
+                        <p class="font-medium text-indigo-600">Fichiers sélectionnés :</p>
+                        <ul id="file-names" class="list-disc pl-5 mt-1 space-y-1 text-gray-500"></ul>
+                    </div>
                 </div>
-            @endif
+            </div>
 
-            <!-- Actions restaurateur -->
-            @can('update', $restaurant)
-                <div class="mt-6 pt-6 border-t flex gap-2">
-                    <a href="{{ route('horaires.edit', $restaurant) }}" 
-                       class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                        Gérer les horaires
-                    </a>
-                    <a href="{{ route('menus.index', $restaurant) }}" 
-                       class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
-                        Gérer les menus
-                    </a>
-                    @can('delete', $restaurant)
-                        <form method="POST" action="{{ route('restaurants.destroy', $restaurant) }}" 
-                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce restaurant ?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700">
-                                Supprimer
-                            </button>
-                        </form>
-                    @endcan
-                </div>
-            @endcan
-        </div>
+            <!-- Actions -->
+            <div class="flex justify-end gap-4 pt-4 border-t">
+                <a href="{{ route('restaurants.my') }}" class="px-6 py-2.5 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition font-medium">
+                    Annuler
+                </a>
+                <button type="submit" class="px-6 py-2.5 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition font-medium">
+                    Publier le restaurant
+                </button>
+            </div>
+        </form>
     </div>
 </div>
+
+<script>
+    // Script simple pour afficher les noms des fichiers sélectionnés
+    document.getElementById('photos').addEventListener('change', function(e) {
+        const fileList = document.getElementById('file-list');
+        const fileNames = document.getElementById('file-names');
+        
+        fileNames.innerHTML = ''; // Clear existing
+        
+        if (this.files.length > 0) {
+            fileList.classList.remove('hidden');
+            for (let i = 0; i < this.files.length; i++) {
+                const li = document.createElement('li');
+                li.textContent = this.files[i].name;
+                fileNames.appendChild(li);
+            }
+        } else {
+            fileList.classList.add('hidden');
+        }
+    });
+</script>
 @endsection
