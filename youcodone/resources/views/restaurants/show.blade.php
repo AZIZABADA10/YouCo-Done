@@ -64,6 +64,13 @@
                 </div>
             </div>
 
+            @if($restaurant->description)
+                <div class="mb-6">
+                    <h3 class="font-semibold text-gray-900 mb-2">📝 À propos</h3>
+                    <p class="text-gray-600 whitespace-pre-line">{{ $restaurant->description }}</p>
+                </div>
+            @endif
+
             <!-- Détails -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div>
