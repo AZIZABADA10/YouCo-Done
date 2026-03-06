@@ -58,6 +58,16 @@
                 </select>
             </div>
 
+            <!-- Recherche par disponibilité -->
+            <div>
+                <label for="horaire" class="block text-sm font-medium text-gray-700 mb-2">Heure (Disponibilité)</label>
+                <input type="time" 
+                       name="horaire" 
+                       id="horaire" 
+                       value="{{ request('horaire') }}"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
             <!-- Boutons -->
             <div class="flex items-end gap-2">
                 <button type="submit" 
@@ -101,6 +111,11 @@
                         <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ $restaurant->nom }}</h3>
                         
                         <div class="space-y-2 text-sm text-gray-600 mb-4">
+                            @if($restaurant->description)
+                                <p class="text-sm text-gray-500 italic mb-2 line-clamp-2">
+                                    {{ Str::limit($restaurant->description, 100) }}
+                                </p>
+                            @endif
                             <p class="flex items-center">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
