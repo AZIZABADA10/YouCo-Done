@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Restaurant;
 use App\Models\Cuisine;
+use App\Models\Photo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -31,6 +32,10 @@ class RestaurantController extends Controller
 
         if ($request->filled('nom')) {
             $query->byNom($request->nom);
+        }
+
+        if ($request->filled('horaire')) {
+            $query->byHoraire($request->horaire);
         }
 
         $restaurants = $query->latest()->paginate(12);
@@ -62,6 +67,7 @@ class RestaurantController extends Controller
             'localisation' => 'required|string|max:255',
             'cuisine_id' => 'required|exists:cuisines,id',
             'capacite' => 'required|integer|min:1',
+            'description' => 'nullable|string|max:2000',
             'ouverture_a' => 'nullable|date',
             'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -121,6 +127,7 @@ class RestaurantController extends Controller
             'localisation' => 'required|string|max:255',
             'cuisine_id' => 'required|exists:cuisines,id',
             'capacite' => 'required|integer|min:1',
+            'description' => 'nullable|string|max:2000',
             'ouverture_a' => 'nullable|date',
             'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'delete_photos' => 'nullable|array',
