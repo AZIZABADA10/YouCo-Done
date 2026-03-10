@@ -14,6 +14,7 @@ class Restaurant extends Model
         'user_id',
         'cuisine_id',
         'nom',
+        'description',
         'localisation',
         'capacite',
         'ouverture_a',
@@ -79,6 +80,20 @@ class Restaurant extends Model
         return $nom 
             ? $query->where('nom', 'like', "%{$nom}%")
             : $query;
+    }
+
+    public function scopeByHoraire(Builder $query, ?string $horaire): Builder
+    {
+        if (!$horaire) return $query;
+
+        // On suppose que l'horaire est au format "HH:mm"
+        // On cherche les restaurants qui sont ouverts à cette heure n'importe quel jour (version simple)
+        // ou on pourrait filtrer par l'heure d'ouverture/fermeture selon le besoin
+        return $query->whereHas('horaires', function ($q) use ($horaire) {
+            $q->where('statut', 'ouvert')
+              ->where('heure_ouverture', '<=', $horaire)
+              ->where('heure_fermeture', '>=', $horaire);
+        });
     }
 
     public function scopeActive(Builder $query): Builder
