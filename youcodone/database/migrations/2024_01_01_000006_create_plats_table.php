@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('plats', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('menu_id')->constrained('menus')->onDelete('cascade');
             $table->string('content');
             $table->decimal('prix_unit', 8, 2);
             $table->timestamps();
