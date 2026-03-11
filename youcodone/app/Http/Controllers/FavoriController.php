@@ -7,10 +7,7 @@ use Illuminate\Http\Request;
 
 class FavoriController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+
 
     /**
      * Afficher tous les favoris de l'utilisateur
