@@ -16,8 +16,12 @@ Route::get('/', function () {
 
 Route::get('/restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');
 
-
-
+Route::get('/dashboard', function () {
+    if (auth()->check() && auth()->user()->hasRole('admin')) {
+        return redirect()->route('admin.dashboard');
+    }
+    return redirect()->route('restaurants.index');
+})->middleware(['auth'])->name('dashboard');
 Route::middleware('auth')->group(function () {
     
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
