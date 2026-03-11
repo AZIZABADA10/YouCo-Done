@@ -11,10 +11,7 @@ class MenuController extends Controller
 {
     use AuthorizesRequests;
 
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+
 
     /**
      * Display a listing of the resource.
@@ -46,11 +43,8 @@ class MenuController extends Controller
         $this->authorize('update', $restaurant);
 
         $validated = $request->validate([
-            'creer_menu' => 'boolean',
-            'supprimer_menu' => 'boolean',
-            'modifier_menu' => 'boolean',
-            'get_all_menu' => 'boolean',
-            'get_by_id' => 'boolean',
+            'nom' => 'required|string|max:255',
+            'description' => 'nullable|string',
         ]);
 
         $validated['restaurant_id'] = $restaurant->id;
@@ -92,11 +86,8 @@ class MenuController extends Controller
         $this->authorize('update', $restaurant);
 
         $validated = $request->validate([
-            'creer_menu' => 'boolean',
-            'supprimer_menu' => 'boolean',
-            'modifier_menu' => 'boolean',
-            'get_all_menu' => 'boolean',
-            'get_by_id' => 'boolean',
+            'nom' => 'required|string|max:255',
+            'description' => 'nullable|string',
         ]);
 
         $menu->update($validated);
