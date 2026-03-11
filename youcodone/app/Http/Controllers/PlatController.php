@@ -12,10 +12,7 @@ class PlatController extends Controller
 {
     use AuthorizesRequests;
 
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+
 
     /**
      * Show the form for creating a new resource.
